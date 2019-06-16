@@ -4,7 +4,7 @@
 
 2019年4〜6月に[probspace](https://prob.space/competitions/credit_default_risk)で行われたコンペの2ndSolutionを残します。
 
-面倒くさいという人は、[`main.py`]()みてください。
+面倒くさいという人は、[`main.py`](https://github.com/nishimoto/probspace_creditcard_public/blob/master/main.py)みてください。
 
 今回は主に、
 
@@ -68,6 +68,8 @@ fimp_df.plot(kind="bar")
 
 ![./assets/feature_importances.png](./assets/feature_importances.png)
 
+主にX6（先月支払いができていたか）が大事だということが分かります。
+
 ## 2. CrossValScoreの導入
 
 このあとFeature Enginneringなどをするにあたり、手元データで精度を出せないとお話になりません。
@@ -115,20 +117,20 @@ def validate(train_x, train_y, params):
 基本的に直近のデータ（X6, X12, X18）あたりを割ったりしていました。
 
  - 請求書の金額の傾き(コード中のa2)
-  - [元ネタはKaggleのHomeCreditコンペのSolution](https://github.com/neptune-ml/open-solution-home-credit)より。
+	- [元ネタはKaggleのHomeCreditコンペのSolution](https://github.com/neptune-ml/open-solution-home-credit)より。
 
  - X12/X13
-  - 意味合いとしては上の「請求書の金額の傾き」と同じようなもの。
+	- 意味合いとしては上の「請求書の金額の傾き」と同じようなもの。
 
  - X1/X12
-  - 限度額に対しての請求書の金額。借りすぎかどうかの指標
+	- 限度額に対しての請求書の金額。借りすぎかどうかの指標
 
  - X6/X7
-  - 意味合いとしては「支払い記録の傾き」。
+	- 意味合いとしては「支払い記録の傾き」。
 
  - X1/X6
-  - 意味合いとしては限度額に対して支払いができているか?
-  - なぜ精度があがるかはわからない
+	- 意味合いとしては限度額に対して支払いができているか?
+	- なぜ精度があがるかはわからないけど精度あがった笑
 
 また、この辺で一度ハイパーパラメータのチューニングなども試してみましたが、
 全然精度あがらなかった記憶があります。
@@ -147,9 +149,9 @@ for col in ["X6", "X7", "X8", "X9", "X10", "X11"]:
 
 ## 3. feature selection（Acc: 0.833 → 0.835）
 
-以下のような作戦をとりました。
+optunaを使い、以下のような作戦をとりました。
 
-![./assets/feature_engineering_by_optuna.png](./assets/feature_engineering_by_optuna.png)
+<img src="./assets/feature_engineering_by_optuna.png" width="50%">
 
 だいたい以下のようなソースコードで動かしていました。
 
@@ -238,9 +240,9 @@ study.optimize(feature_selection_byoptuna, n_trials=200, n_jobs=1)
 |-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
 |39|210000|1|1|2|29|-2|-2|-2|-2|-2|-2|0|0|0|0|0|0|0|0|0|0|0|0|1|
 
-彼らは履歴がないことを示します。
-
 彼らは、**X6が-2にもかかわらず、default率が3割程度で、X6が-2の人の3倍程度の確率です。**
+
+（下の調査用のコード参照）
 
 そして、 **上記までの予測では、全員を0として予測していることがわかりました。**
 
@@ -265,7 +267,7 @@ print(df_train__2["y"].sum(), df_train__2.shape[0], df_train__2["y"].sum() / df_
 
 その後、[リークに関する発見](https://prob.space/topics/nishimoto-Postf8a331fb47a070e7b9d6)などもあり、nohist（X12〜X23）が0の人だけでkNNをするのが一番精度がよいということがわかりました。
 
-min-max scaling, n=4でkNNをすると、精度が0.839まで行きました。（LBにいろいろぶん投げて検証）
+min-max scaling, n=4でkNNをすると、精度が0.839まで行きました。（parameterはLBにいろいろぶん投げて検証）
 
 ```py
 def preprocess_knn(df_train, df_test):
