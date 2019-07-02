@@ -1,13 +1,13 @@
 #!/usr/bin/env python # 3.6.8
 import warnings
-import numpy as np
-import pandas as pd
+import numpy as np     # 1.16.4
+import pandas as pd    # 0.24.2
 import xgboost as xgb  # 0.90
 
 from tqdm import tqdm
 from collections import defaultdict
 
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score           # 0.21.2
 from sklearn.model_selection import StratifiedKFold
 from sklearn.neighbors import KNeighborsClassifier
 
