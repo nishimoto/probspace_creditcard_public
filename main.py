@@ -269,7 +269,7 @@ def main():
         df_test_raw = df_test.copy()
         test_x = preprocess_df(df_test)
         result_df = predict_df(train_x, train_y, test_x, df_test_raw)
-        result_df.to_csv("result.xgb.csv", index=False)
+        # result_df.to_csv("result.xgb.csv", index=False)
         n_neighbors = 4
         result_df = predict_nohistknn(result_df, n_neighbors=n_neighbors)
         result_df.to_csv("result.xgb.{}.csv".format(n_neighbors), index=False)
