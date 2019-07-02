@@ -110,7 +110,7 @@ def preprocess_df(df):
 
 
 # いろいろfeature_selectionは試した。
-# X5とX14を除くと0.836へ。
+# X5とX14を除くと0.835へ。
 def preprocess_df(df):
     df.drop(["ID", "a1", "b1", "b2", "a3", "b3"], axis=1, inplace=True)
     df.drop(["X5", "X14"], axis=1, inplace=True)
